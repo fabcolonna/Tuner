@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "TunerWinUI (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "TunerWinUI (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
