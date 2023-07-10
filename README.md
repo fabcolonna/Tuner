@@ -1,1 +1,2 @@
-# Real time Spectrum Analyzer & Oscilloscope
+# Tuner
+## Real-time Spectrum Analyzer & Oscilloscope
