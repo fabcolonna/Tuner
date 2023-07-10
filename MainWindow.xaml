@@ -7,7 +7,11 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:oxy="using:OxyPlot"
     mc:Ignorable="d">
-    
+
+    <Window.SystemBackdrop>
+        <MicaBackdrop Kind="Base"></MicaBackdrop>
+    </Window.SystemBackdrop>
+
     <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition MaxHeight="35"/>
@@ -49,6 +53,7 @@
                 </Button>
 
                 <Button Margin="10 0 0 0"
+                        x:Name="CaptureButton"
                         Click="ToggleCaptureClick"
                         Padding="10 0"
                         VerticalAlignment="Stretch">
@@ -57,7 +62,8 @@
                                  MaxWidth="16"
                                  Margin="0 0 10 0"
                                  >
-                            <SymbolIcon Symbol="Microphone"/>
+                            <SymbolIcon Symbol="Microphone"
+                                        x:Name="CaptureButtonSymbol"/>
                         </Viewbox>
 
                         <TextBlock Text="Start/Stop Capture"/>
@@ -83,7 +89,7 @@
             />
 
             <Page Grid.Row="1">
-                <oxy:PlotView Model="{x:Bind TempModel}"
+                <oxy:PlotView Model="{x:Bind TimeDomainPlot.Model}"
                               Background="Transparent"/>
             </Page>
         </Grid>

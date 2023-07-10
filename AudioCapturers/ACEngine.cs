@@ -1,9 +1,9 @@
-﻿using Microsoft.UI.Dispatching;
-using NAudio.CoreAudioApi;
-using OxyPlot;
+﻿using NAudio.CoreAudioApi;
+using NAudio.Wave;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using TunerWinUI.AudioVisualizers;
 
 namespace TunerWinUI.AudioCapturers
 {
@@ -12,6 +12,8 @@ namespace TunerWinUI.AudioCapturers
         private IDictionary<string, MMDevice> mDevices;
 
         private WasapiCapture mCapture;
+
+        public bool IsBusyCapturing { get; private set; }
 
         public ICollection<string> OnlineDevices => mDevices.Keys;
 
@@ -26,7 +28,7 @@ namespace TunerWinUI.AudioCapturers
                 .ForEach(dev => mDevices.Add(dev.FriendlyName, dev));
         }
 
-        public void StartCapture16Bit(string device, PlotModel model, ICollection<DataPoint> coll, DispatcherQueue uiCoreDispatcher, int sampleRate = 44100)
+        public void StartCapture16Bit(string device, IRealTimeAudioDataPlotter16Bit plotter, int sampleRate = 44100)
         {
             if (!mDevices.ContainsKey(device))
                 throw new ArgumentException($"Invalid/Offline device: {device}");
@@ -34,30 +36,22 @@ namespace TunerWinUI.AudioCapturers
             if (sampleRate is <= 0 or > 192000)
                 throw new ArgumentException($"Invalid sampling rate: {sampleRate}");
 
-            mCapture = new WasapiCapture(mDevices[device]);
-            mCapture.WaveFormat = new(44100, 16, 1);
-            mCapture.DataAvailable += (_, data) =>
-            {
-                lock (model.SyncRoot)
-                {
-                    coll.Clear();
-                    for (var i = 0; i < data.BytesRecorded; i += 2)
-                    {
-                        var sample = (short)(data.Buffer[i + 1] << 8 | data.Buffer[i]);
-                        var normalized = sample / (double)short.MaxValue;
-                        coll.Add(new DataPoint(i, normalized));
-                    }
-                }
+            // Fortunatamente WasapiLoopback è un'estensione di WasapiCapture -> polimorfismo :)
+            var selectedDevice = mDevices[device];
+            mCapture = selectedDevice.DataFlow == DataFlow.Capture ? new WasapiCapture(selectedDevice) : new WasapiLoopbackCapture(selectedDevice);
 
-                uiCoreDispatcher.TryEnqueue(
-                    () => model.InvalidatePlot(true));
-            };
+            mCapture.WaveFormat = new(sampleRate, 16, 1);
+            mCapture.DataAvailable += (_, data) => plotter.Update(data.Buffer, data.BytesRecorded);
 
+            IsBusyCapturing = true;
             mCapture.StartRecording();
         }
 
         public void StopCapture()
         {
+            if (!IsBusyCapturing) return;
+
+            IsBusyCapturing = false;
             mCapture?.StopRecording();
             mCapture?.Dispose();
             mCapture = null;
