@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net6.0-windows10.0.19041.0</TargetFramework>
@@ -25,6 +25,7 @@
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.1" />
     <PackageReference Include="H.OxyPlot.WinUI" Version="0.9.30" />
+    <PackageReference Include="MathNet.Numerics" Version="5.0.0" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.4.230628000-preview1" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.25387-preview" />
     <PackageReference Include="NAudio" Version="2.1.0" />
