@@ -188,7 +188,6 @@
         <Grid Grid.Row="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="30"/>
-                <RowDefinition Height="20"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
 
@@ -202,7 +201,7 @@
                 Text="PCM Time Data"
             />
 
-            <Page Grid.Row="2">
+            <Page Grid.Row="1">
                 <oxy:PlotView Model="{x:Bind TimeDomainPlot.Model}"
                               Background="Transparent"/>
             </Page>
@@ -212,7 +211,6 @@
         <Grid Grid.Row="2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="30"/>
-                <RowDefinition Height="20"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
 
@@ -226,48 +224,7 @@
                 Text="FFT Frequency Data"
             />
 
-            <Grid Grid.Row="1">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-
-                <StackPanel Grid.Column="0" Orientation="Horizontal"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center">
-                    <TextBlock Text="Points rendered: "
-                               VerticalAlignment="Center"
-                               Margin="10 0 10 0"/>
-
-                    <TextBlock Text="N/A"
-                               VerticalAlignment="Center"/>
-                </StackPanel>
-
-                <StackPanel Grid.Column="1" Orientation="Horizontal"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center">
-                    <TextBlock Text="Frame rate: "
-                               VerticalAlignment="Center"
-                               Margin="10 0 10 0"/>
-
-                    <TextBlock Text="N/A"
-                               VerticalAlignment="Center"/>
-                </StackPanel>
-
-                <StackPanel Grid.Column="2" Orientation="Horizontal"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center">
-                    <TextBlock Text="FFT Precision: "
-                               VerticalAlignment="Center"
-                               Margin="10 0 10 0"/>
-
-                    <TextBlock Text="N/A"
-                               VerticalAlignment="Center"/>
-                </StackPanel>
-            </Grid>
-
-            <Page Grid.Row="2">
+            <Page Grid.Row="1">
                 <oxy:PlotView Model="{x:Bind FrequencyDomainPlot.Model}"
                               Background="Transparent"/>
             </Page>

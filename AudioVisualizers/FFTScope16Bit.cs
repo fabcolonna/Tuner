@@ -10,9 +10,10 @@ namespace TunerWinUI.AudioVisualizers;
 
 public sealed class FFTScope16Bit : RTScope<short>, IFFTScope<short>
 {
-    private int mFFTSize = 8192, mSampleRate = 44100, mMaxHertz = 10000, mMaxAmplitude = 25000;
+    private int mFFTSize = 8192, mSampleRate = 44100, mMaxHertz = 10000;
+    private int mMaxYAxis;
 
-    public ICollection<int> AvailableFFTSizes { get; private set; }
+    public ICollection<int> AvailableFFTSizes { get; }
 
     public int FFTSize
     {
@@ -50,15 +51,17 @@ public sealed class FFTScope16Bit : RTScope<short>, IFFTScope<short>
         }
     }
 
-    public int MaxAmplitude
+    public int MaximumYValue
     {
-        get => mMaxAmplitude;
+        get => mMaxYAxis;
         set
         {
-            if (value is <= 0 or > 20000)
-                throw new ArgumentException($"Invalid max Hertz threshold: {mMaxAmplitude}");
+            if (value <= 0)
+                throw new ArgumentException("MaximumYValue must be > 0");
 
-            mMaxAmplitude = value;
+            mMaxYAxis = value;
+            YAxis.Maximum = value;
+            YAxis.AbsoluteMaximum = value;
         }
     }
 
@@ -66,8 +69,6 @@ public sealed class FFTScope16Bit : RTScope<short>, IFFTScope<short>
     {
         AvailableFFTSizes = new List<int> { 2048, 4096, 8192, 16384, 32768, 65536 };
 
-        XAxis.Minimum = 0;
-        XAxis.AbsoluteMinimum = 0;
         XAxis.AbsoluteMaximum = 20000;
         XAxis.Maximum = mMaxHertz;
         XAxis.MajorGridlineStyle = LineStyle.Solid;
@@ -77,10 +78,13 @@ public sealed class FFTScope16Bit : RTScope<short>, IFFTScope<short>
         XAxis.Title = "Frequency (kHz)";
         XAxis.IsAxisVisible = true;
 
+        MaximumYValue = 25000;
+
         YAxis.IsAxisVisible = true;
         YAxis.Minimum = 0;
         YAxis.AbsoluteMinimum = 0;
-        YAxis.Maximum = mMaxAmplitude;
+        YAxis.IsZoomEnabled = false;
+        YAxis.IsPanEnabled = false;
         YAxis.LabelFormatter = val => ((int)val / 1000).ToString();
     }
 
@@ -110,7 +114,7 @@ public sealed class FFTScope16Bit : RTScope<short>, IFFTScope<short>
             for (var i = 0; i < mFFTSize / 2; i++)
             {
                 var freq = (float)i * mSampleRate / mFFTSize;
-                var ampl = complexes[i].Magnitude;
+                var ampl = complexes[i].Magnitude > mMaxYAxis ? mMaxYAxis : complexes[i].Magnitude;
                 mCollector.Add(new DataPoint(freq, ampl));
             }
         }
